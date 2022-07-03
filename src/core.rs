@@ -7,6 +7,7 @@
 
 use crate::puppet::Inochi2DPuppet;
 
+use std::path::PathBuf;
 mod binding {
     /* Types */
     extern "C" {
@@ -24,14 +25,76 @@ mod binding {
     }
 }
 
-pub struct Inochi2D {
-    pub puppets: Vec<Inochi2DPuppet>,
+pub struct Inochi2D<'a> {
+    pub puppets: Vec<Inochi2DPuppet<'a>>,
 
     pub view_width: i32,
     pub view_height: i32,
 }
 
-impl Inochi2D {
+impl<'a> Inochi2D<'a> {
+
+    /// Add a new puppet to the Inochi2D context.
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    ///
+    /// ctx.add_puppet("./puppets/Ada.inx");
+    ///
+    /// ~~~
+    ///
+    pub fn add_puppet(&mut self, puppet: PathBuf) {
+        self.puppets.push(Inochi2DPuppet::new(puppet))
+    }
+
+    /// Update all puppets in the current context.
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    ///
+    /// ctx.update_puppets();
+    ///
+    /// ~~~
+    ///
+    pub fn update_puppets(&mut self) {
+        for p in self.puppets.iter_mut() {
+            p.update()
+        }
+    }
+
+    /// Draw all puppets in the current context.
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    ///
+    /// ctx.draw_puppets();
+    ///
+    /// ~~~
+    ///
+    #[cfg(feature = "opengl")]
+    pub fn draw_puppets(&mut self) {
+        for p in self.puppets.iter_mut() {
+            p.draw()
+        }
+    }
+
+    /// Set the viewport geometry for the current context.
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    ///
+    /// ctx.set_viewport(800, 600);
+    ///
+    /// ~~~
+    ///
     pub fn set_viewport(&mut self, w: i32, h: i32) {
         unsafe {
             binding::inViewportSet(w, h);
@@ -40,6 +103,23 @@ impl Inochi2D {
         self.view_height = h;
     }
 
+    /// Get the viewport geometry for the current context.
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    ///
+    /// let viewport = ctx.get_viewport();
+    ///
+    /// println!("Viewport is {}x{}", viewport.0, viewport.1);
+    ///
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A tuple `(i32, i32)` with item 0 being the width and item 1 being the height.
+    ///
     pub fn get_viewport(&mut self) -> (i32, i32) {
         let mut viewport_width: i32 = 0;
         let mut viewport_height: i32 = 0;
@@ -54,26 +134,38 @@ impl Inochi2D {
         (viewport_width, viewport_height)
     }
 
-    pub fn new(timing: binding::InTimingFunc, w: Option<i32>, h: Option<i32>) -> Self {
-        let viewport_width = w.unwrap_or(800);
-        let viewport_height = h.unwrap_or(600);
-
+    /// Initialize a new Inochi2D context.
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    ///
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A new `Inochi2D` context.
+    ///
+    pub fn new(timing: binding::InTimingFunc, w: i32, h: i32) -> Self {
         unsafe {
             binding::inInit(timing);
-            binding::inViewportSet(viewport_width, viewport_height);
+            binding::inViewportSet(w, h);
 
             Inochi2D {
                 puppets: Vec::new(),
 
-                view_width: viewport_width,
-                view_height: viewport_height,
+                view_width: w,
+                view_height: h,
             }
         }
     }
 }
 
-impl Drop for Inochi2D {
+impl<'a> Drop for Inochi2D<'a> {
     fn drop(&mut self) {
+        self.puppets.clear();
+
         unsafe {
             binding::inCleanup();
         }
@@ -90,6 +182,6 @@ mod tests {
 
     #[test]
     fn test_initialization() {
-        let pup = Inochi2D::new(timing_func, None, None);
+        let _ctx = Inochi2D::new(timing_func, 800, 600);
     }
 }

@@ -5,6 +5,8 @@
     Authors: Aki "lethalbit" Van Ness
 */
 
+use std::path::PathBuf;
+
 mod binding {
     extern "C" {
         pub type InPuppet;
@@ -18,33 +20,34 @@ mod binding {
         pub fn inPuppetLoadFromMemory(data: *const u8, len: usize) -> InPuppetPtr;
         pub fn inPuppetDestroy(puppet: InPuppetPtr);
 
-        #[cfg(opengl)]
+        #[cfg(feature = "opengl")]
         pub fn inPuppetDraw(puppet: InPuppetPtr);
     }
 }
 
-pub struct Inochi2DPuppet {
+pub struct Inochi2DPuppet<'a> {
     handle: binding::InPuppetPtr,
-    pub name: String,
+    pub name: &'a str,
 }
 
-impl Inochi2DPuppet {
-	pub fn from(buffer: *const u8, size: usize, name: Option<String>) -> Self {
+impl<'a> Inochi2DPuppet<'a> {
+	pub fn from(buffer: *const u8, size: usize, name: Option<&'a str>) -> Self {
 		unsafe {
 			let hndl = binding::inPuppetLoadFromMemory(buffer, size);
 			Inochi2DPuppet {
 				handle: hndl,
-				name: name.unwrap_or(String::from("<in-memory-puppet>"))
+				name: name.unwrap_or("<in-memory-puppet>")
 			}
 		}
 	}
 
-    pub fn new(puppet: String) -> Self {
+    pub fn new(puppet: PathBuf) -> Self {
+        let puppet_path = puppet.to_str().expect("Unable to get puppet path");
         unsafe {
-            let hndl = binding::inPuppetLoadEx(puppet.as_ptr(), puppet.len());
+            let hndl = binding::inPuppetLoadEx(puppet_path.as_ptr(), puppet_path.len());
             Inochi2DPuppet {
                 handle: hndl,
-                name: puppet
+                name: puppet_path
             }
         }
     }
@@ -55,7 +58,7 @@ impl Inochi2DPuppet {
 		}
 	}
 
-	#[cfg(opengl)]
+	#[cfg(feature = "opengl")]
 	pub fn draw(&mut self) {
 		unsafe {
 			binding::inPuppetUpdate(self.handle);
@@ -64,7 +67,7 @@ impl Inochi2DPuppet {
 	}
 }
 
-impl Drop for Inochi2DPuppet {
+impl<'a> Drop for Inochi2DPuppet<'a> {
     fn drop(&mut self) {
         unsafe {
             binding::inPuppetDestroy(self.handle);

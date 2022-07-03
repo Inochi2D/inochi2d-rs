@@ -5,12 +5,17 @@
     Authors: Aki "lethalbit" Van Ness
 */
 
-
-#[cfg(opengl)]
 mod binding {
     extern "C" {
         pub fn inSceneBegin();
         pub fn inSceneEnd();
         pub fn inSceneDraw(x: f32, y: f32, width: f32, height: f32);
     }
+}
+
+
+pub struct Inochi2DScene {}
+
+impl Inochi2DScene {
+
 }
