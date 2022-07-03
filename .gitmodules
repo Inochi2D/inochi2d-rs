@@ -1,0 +1,3 @@
+[submodule "examples/models"]
+	path = examples/models
+	url = https://github.com/Inochi2D/example-models
