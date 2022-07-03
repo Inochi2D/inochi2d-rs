@@ -3,7 +3,27 @@ name = "inochi2d-rs"
 version = "0.1.0"
 edition = "2021"
 build = "build.rs"
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = [
+     "Aki Van Ness <aki@catgirl.link>"
+]
+repository = "https://github.com/Inochi2D/inochi2d-rs"
+readme = "README.md"
+license = "BSD-2-Clause"
+keywords = [
+	"Inochi2D",
+	"gamedev",
+	"vtuber",
+	"streaming"
+]
+categories = [
+    "external-ffi-bindings"
+]
+description = "Rust bindings for Inochi2D"
+
+
+[features]
+default = []
+opengl = []
 
 [dependencies]
 libc = "0.2"
