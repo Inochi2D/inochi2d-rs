@@ -26,15 +26,47 @@ mod binding {
 
 pub struct Inochi2D {
     pub puppets: Vec<Inochi2DPuppet>,
+
+    pub view_width: i32,
+    pub view_height: i32,
 }
 
 impl Inochi2D {
-    pub fn new(timing: binding::InTimingFunc) -> Self {
+    pub fn set_viewport(&mut self, w: i32, h: i32) {
+        unsafe {
+            binding::inViewportSet(w, h);
+        }
+        self.view_width = w;
+        self.view_height = h;
+    }
+
+    pub fn get_viewport(&mut self) -> (i32, i32) {
+        let mut viewport_width: i32 = 0;
+        let mut viewport_height: i32 = 0;
+
+        unsafe {
+            binding::inViewportGet(&mut viewport_width, &mut viewport_height);
+        }
+
+        self.view_width = viewport_width;
+        self.view_height = viewport_height;
+
+        (viewport_width, viewport_height)
+    }
+
+    pub fn new(timing: binding::InTimingFunc, w: Option<i32>, h: Option<i32>) -> Self {
+        let viewport_width = w.unwrap_or(800);
+        let viewport_height = h.unwrap_or(600);
+
         unsafe {
             binding::inInit(timing);
+            binding::inViewportSet(viewport_width, viewport_height);
 
             Inochi2D {
                 puppets: Vec::new(),
+
+                view_width: viewport_width,
+                view_height: viewport_height,
             }
         }
     }
@@ -58,6 +90,6 @@ mod tests {
 
     #[test]
     fn test_initialization() {
-        let pup = Inochi2D::new(timing_func);
+        let pup = Inochi2D::new(timing_func, None, None);
     }
 }
