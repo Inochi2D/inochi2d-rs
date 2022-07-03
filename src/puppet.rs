@@ -39,10 +39,17 @@ impl Inochi2DPuppet {
         }
     }
 
+	pub fn update(&mut self) {
+		unsafe {
+			binding::inPuppetUpdate(self.handle);
+		}
+	}
+
 	#[cfg(opengl)]
 	pub fn draw(&mut self) {
 		unsafe {
 			binding::inPuppetUpdate(self.handle);
+			binding::inPuppetDraw(self.handle);
 		}
 	}
 }
