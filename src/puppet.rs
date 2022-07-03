@@ -29,7 +29,17 @@ pub struct Inochi2DPuppet {
 }
 
 impl Inochi2DPuppet {
-    pub fn from(puppet: String) -> Self {
+	pub fn from(buffer: *const u8, size: usize, name: Option<String>) -> Self {
+		unsafe {
+			let hndl = binding::inPuppetLoadFromMemory(buffer, size);
+			Inochi2DPuppet {
+				handle: hndl,
+				name: name.unwrap_or(String::from("<in-memory-puppet>"))
+			}
+		}
+	}
+
+    pub fn new(puppet: String) -> Self {
         unsafe {
             let hndl = binding::inPuppetLoadEx(puppet.as_ptr(), puppet.len());
             Inochi2DPuppet {
