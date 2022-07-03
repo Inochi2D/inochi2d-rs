@@ -52,7 +52,7 @@ impl Drop for Inochi2D {
 mod tests {
     use crate::core::Inochi2D;
 
-    fn timing_func() -> f64 {
+    extern fn timing_func() -> f64 {
         0.0
     }
 
