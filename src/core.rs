@@ -25,14 +25,14 @@ mod binding {
     }
 }
 
-pub struct Inochi2D<'a> {
-    pub puppets: Vec<Inochi2DPuppet<'a>>,
+pub struct Inochi2D {
+    pub puppets: Vec<Inochi2DPuppet>,
 
     pub view_width: i32,
     pub view_height: i32,
 }
 
-impl<'a> Inochi2D<'a> {
+impl Inochi2D {
 
     /// Add a new puppet to the Inochi2D context.
     ///
@@ -162,7 +162,7 @@ impl<'a> Inochi2D<'a> {
     }
 }
 
-impl<'a> Drop for Inochi2D<'a> {
+impl Drop for Inochi2D {
     fn drop(&mut self) {
         self.puppets.clear();
 

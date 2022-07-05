@@ -25,26 +25,28 @@ mod binding {
     }
 }
 
-pub struct Inochi2DPuppet<'a> {
+pub struct Inochi2DPuppet {
     handle: binding::InPuppetPtr,
-    pub name: &'a str,
+    pub name: String,
 }
 
-impl<'a> Inochi2DPuppet<'a> {
-	pub fn from(buffer: *const u8, size: usize, name: Option<&'a str>) -> Self {
+impl Inochi2DPuppet {
+	pub fn from(buffer: *const u8, size: usize, name: Option<String>) -> Self {
 		unsafe {
 			let hndl = binding::inPuppetLoadFromMemory(buffer, size);
 			Inochi2DPuppet {
 				handle: hndl,
-				name: name.unwrap_or("<in-memory-puppet>")
+				name: name.unwrap_or(String::from("<in-memory-puppet>"))
 			}
 		}
 	}
 
-    pub fn new(puppet: PathBuf) -> Self {
-        let puppet_path = puppet.to_str().expect("Unable to get puppet path");
+    pub fn new(mut puppet: PathBuf) -> Self {
+        let puppet_path = String::from(puppet.to_str().expect("Unable to get puppet path"));
+
         unsafe {
             let hndl = binding::inPuppetLoadEx(puppet_path.as_ptr(), puppet_path.len());
+
             Inochi2DPuppet {
                 handle: hndl,
                 name: puppet_path
@@ -61,13 +63,12 @@ impl<'a> Inochi2DPuppet<'a> {
 	#[cfg(feature = "opengl")]
 	pub fn draw(&mut self) {
 		unsafe {
-			binding::inPuppetUpdate(self.handle);
 			binding::inPuppetDraw(self.handle);
 		}
 	}
 }
 
-impl<'a> Drop for Inochi2DPuppet<'a> {
+impl Drop for Inochi2DPuppet {
     fn drop(&mut self) {
         unsafe {
             binding::inPuppetDestroy(self.handle);

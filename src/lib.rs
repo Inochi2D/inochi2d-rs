@@ -95,7 +95,7 @@ impl<'a> Inochi2DBuilder {
         self
     }
 
-        /// Add a puppet to be loaded.
+    /// Add a puppet to be loaded.
     ///
     /// # Example
     /// ~~~no_run
@@ -130,7 +130,7 @@ impl<'a> Inochi2DBuilder {
     /// - If initialization was successful a `Inochi2D` context.
     /// - If errors occurred an `Err(())` will be returned.
     ///
-    pub fn build(self) -> Result<Inochi2D<'a>, ()> {
+    pub fn build(self) -> Result<Inochi2D, ()> {
         if self.time_func.is_none() {
             Err(())
         } else {
