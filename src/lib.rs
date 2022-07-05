@@ -23,10 +23,9 @@ pub mod scene;
 use crate::core::Inochi2D;
 use std::path::PathBuf;
 
-
 pub struct Inochi2DBuilder {
     viewport_size: (i32, i32),
-    time_func: Option<extern fn() -> f64>,
+    time_func: Option<extern "C" fn() -> f64>,
     puppets: Vec<PathBuf>,
 }
 
@@ -113,7 +112,7 @@ impl<'a> Inochi2DBuilder {
     ///
     /// The current `Inochi2DBuilder` instance.
     ///
-    pub fn timing(mut self, func: extern fn() -> f64) -> Inochi2DBuilder {
+    pub fn timing(mut self, func: extern "C" fn() -> f64) -> Inochi2DBuilder {
         self.time_func = Some(func);
         self
     }
@@ -139,7 +138,7 @@ impl<'a> Inochi2DBuilder {
             let mut ctx = Inochi2D::new(
                 self.time_func.unwrap(),
                 self.viewport_size.0,
-                self.viewport_size.1
+                self.viewport_size.1,
             );
 
             for p in self.puppets {
@@ -148,7 +147,5 @@ impl<'a> Inochi2DBuilder {
 
             Ok(ctx)
         }
-
-
     }
 }

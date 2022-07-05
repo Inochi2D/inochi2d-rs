@@ -21,82 +21,81 @@ mod binding {
 }
 
 pub struct Inochi2DCamera {
-	handle: binding::InCameraPtr,
-	zoom: f32,
-	x: f32,
-	y: f32,
+    handle: binding::InCameraPtr,
+    zoom: f32,
+    x: f32,
+    y: f32,
 }
 
-
 impl Inochi2DCamera {
-	pub fn set_zoom(&mut self, zoom: f32) {
-		unsafe {
-			binding::inCameraSetZoom(self.handle, zoom);
-		}
+    pub fn set_zoom(&mut self, zoom: f32) {
+        unsafe {
+            binding::inCameraSetZoom(self.handle, zoom);
+        }
 
-		self.zoom = zoom;
-	}
+        self.zoom = zoom;
+    }
 
-	pub fn get_zoom(&mut self) -> f32 {
-		let mut _z: f32 = 0.0;
-		unsafe {
-			binding::inCameraGetZoom(self.handle, &mut _z);
-		}
+    pub fn get_zoom(&mut self) -> f32 {
+        let mut _z: f32 = 0.0;
+        unsafe {
+            binding::inCameraGetZoom(self.handle, &mut _z);
+        }
 
-		self.zoom = _z;
-		_z
-	}
+        self.zoom = _z;
+        _z
+    }
 
-	pub fn sett_pos(&mut self, x: f32, y: f32) {
-		unsafe {
-			binding::inCameraSetPosition(self.handle, x, y);
-		}
+    pub fn sett_pos(&mut self, x: f32, y: f32) {
+        unsafe {
+            binding::inCameraSetPosition(self.handle, x, y);
+        }
 
-		self.x = x;
-		self.y = y;
-	}
+        self.x = x;
+        self.y = y;
+    }
 
-	pub fn get_pos(&mut self) -> (f32, f32) {
-		let mut _x: f32 = 0.0;
-		let mut _y: f32 = 0.0;
+    pub fn get_pos(&mut self) -> (f32, f32) {
+        let mut _x: f32 = 0.0;
+        let mut _y: f32 = 0.0;
 
-		unsafe {
-			binding::inCameraGetPosition(self.handle, &mut _x, &mut _y);
-		}
+        unsafe {
+            binding::inCameraGetPosition(self.handle, &mut _x, &mut _y);
+        }
 
-		self.x = _x;
-		self.y = _y;
+        self.x = _x;
+        self.y = _y;
 
-		(_x, _y)
-	}
+        (_x, _y)
+    }
 
     pub fn new(zoom: Option<f32>, x: Option<f32>, y: Option<f32>) -> Self {
-		unsafe {
+        unsafe {
             let hndl = binding::inCameraGetCurrent();
-			let cam_zoom = zoom.unwrap_or_else(|| {
-				let mut _z: f32 = 0.0;
-				binding::inCameraGetZoom(hndl, &mut _z);
-				_z
-			});
-			// TODO: find a better way to do this
-			let cam_x = x.unwrap_or_else(|| {
-				let mut _x: f32 = 0.0;
-				let mut _y: f32 = 0.0;
-				binding::inCameraGetPosition(hndl, &mut _x, &mut _y);
-				_x
-			});
-			let cam_y = y.unwrap_or_else(|| {
-				let mut _x: f32 = 0.0;
-				let mut _y: f32 = 0.0;
-				binding::inCameraGetPosition(hndl, &mut _x, &mut _y);
-				_y
-			});
+            let cam_zoom = zoom.unwrap_or_else(|| {
+                let mut _z: f32 = 0.0;
+                binding::inCameraGetZoom(hndl, &mut _z);
+                _z
+            });
+            // TODO: find a better way to do this
+            let cam_x = x.unwrap_or_else(|| {
+                let mut _x: f32 = 0.0;
+                let mut _y: f32 = 0.0;
+                binding::inCameraGetPosition(hndl, &mut _x, &mut _y);
+                _x
+            });
+            let cam_y = y.unwrap_or_else(|| {
+                let mut _x: f32 = 0.0;
+                let mut _y: f32 = 0.0;
+                binding::inCameraGetPosition(hndl, &mut _x, &mut _y);
+                _y
+            });
 
-			Inochi2DCamera {
+            Inochi2DCamera {
                 handle: hndl,
-				zoom: cam_zoom,
-				x: cam_x,
-				y: cam_y,
+                zoom: cam_zoom,
+                x: cam_x,
+                y: cam_y,
             }
         }
     }

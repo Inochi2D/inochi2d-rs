@@ -12,7 +12,7 @@ mod binding {
     /* Types */
     create_opaque_type!(InRenderable);
 
-    pub type InTimingFunc = extern fn() -> f64;
+    pub type InTimingFunc = extern "C" fn() -> f64;
 
     /* Functions */
     extern "C" {
@@ -31,7 +31,6 @@ pub struct Inochi2D {
 }
 
 impl Inochi2D {
-
     /// Add a new puppet to the Inochi2D context.
     ///
     /// # Example
@@ -174,7 +173,7 @@ impl Drop for Inochi2D {
 mod tests {
     use crate::core::Inochi2D;
 
-    extern fn timing_func() -> f64 {
+    extern "C" fn timing_func() -> f64 {
         0.0
     }
 

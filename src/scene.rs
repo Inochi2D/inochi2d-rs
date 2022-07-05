@@ -13,9 +13,6 @@ mod binding {
     }
 }
 
-
 pub struct Inochi2DScene {}
 
-impl Inochi2DScene {
-
-}
+impl Inochi2DScene {}
