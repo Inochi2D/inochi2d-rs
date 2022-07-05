@@ -24,6 +24,7 @@ description = "Rust bindings for Inochi2D"
 [features]
 default = ["opengl"]
 opengl = []
+nightly = []
 
 [dependencies]
 libc = "0.2"
