@@ -6,9 +6,8 @@
 */
 
 mod binding {
-    extern "C" {
-        pub type InCamera;
-    }
+    create_opaque_type!(InCamera);
+
     pub type InCameraPtr = *mut InCamera;
 
     extern "C" {

@@ -10,9 +10,7 @@ use crate::puppet::Inochi2DPuppet;
 use std::path::PathBuf;
 mod binding {
     /* Types */
-    extern "C" {
-        pub type InRenderable;
-    }
+    create_opaque_type!(InRenderable);
 
     pub type InTimingFunc = extern fn() -> f64;
 

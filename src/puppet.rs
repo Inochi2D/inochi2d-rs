@@ -8,9 +8,8 @@
 use std::path::PathBuf;
 
 mod binding {
-    extern "C" {
-        pub type InPuppet;
-    }
+    create_opaque_type!(InPuppet);
+
     pub type InPuppetPtr = *mut InPuppet;
 
     extern "C" {
