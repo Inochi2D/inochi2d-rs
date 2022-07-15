@@ -7,9 +7,25 @@ This repository contains the (preliminary) Rust bindings for Inochi2D using the 
 
 ## Building
 
-These bindings currently assume the build `libinochi2d-c.so` is located in the root of the repository.
+To build these bindings, you need [ldc](https://github.com/ldc-developers/ldc), [dub](https://dub.pm/), and [git](https://git-scm.com/) in addition to
+the normal rust toolchain.
 
-Then just run `cargo build`
+The [`build.rs`](./build.rs) will attempt to clone [Inochi2D](https://github.com/Inochi2D/inochi2d/) and [Inochi2D-c](https://github.com/Inochi2D/inochi2d-c) into the target directory and build them from source on first build.
+
+You should only need to build the crate as you would normally.
+
+```
+$ cargo build
+```
+
+## Examples
+
+To build the examples, make sure you have the submodules checked out to ensure the example Inochi2D puppets are where the examples expect them to be.
+
+You can run the main OpenGL example with:
+```
+$ cargo run --example midori
+```
 
 ## License
 
