@@ -6,11 +6,8 @@
 */
 
 pub mod types {
-    #[repr(C)]
-    pub struct InError {
-        len: usize,
-        msg: *const u8,
-    }
+    create_opaque_type!(InError);
+    pub type InErrorPtr = *mut InError;
 
     create_opaque_type!(InPuppet);
     pub type InPuppetPtr = *mut InPuppet;
@@ -28,6 +25,7 @@ pub mod types {
 extern "C" {
     /* Core Functionality */
     pub fn inInit(timing: types::InTimingFunc);
+    pub fn inUpdate();
     pub fn inCleanup();
     pub fn inViewportSet(width: i32, height: i32);
     pub fn inViewportGet(width: *mut i32, height: *mut i32);
@@ -39,6 +37,9 @@ extern "C" {
     #[cfg(feature = "opengl")]
     pub fn inSceneDraw(x: f32, y: f32, width: f32, height: f32);
 
+    /* Error Stuff */
+    pub fn inErrorGet() -> types::InErrorPtr;
+
     /* Cameras */
     pub fn inCameraGetCurrent() -> types::InCameraPtr;
     pub fn inCameraDestroy(camera: types::InCameraPtr);
@@ -48,7 +49,7 @@ extern "C" {
     pub fn inCameraSetZoom(camera: types::InCameraPtr, zoom: f32);
     pub fn inCameraGetCenterOffset(camera: types::InCameraPtr, x: *mut f32, y: *mut f32);
     pub fn inCameraGetRealSize(camera: types::InCameraPtr, x: *mut f32, y: *mut f32);
-    pub fn inCameraGetMatrix(camera: types::InCameraPtr, mat4: *mut f32);
+    pub fn inCameraGetMatrix(camera: types::InCameraPtr, mat4: *mut [f32; 16]);
 
     /* Puppets */
     pub fn inPuppetLoad(path: *const u8) -> types::InPuppetPtr;

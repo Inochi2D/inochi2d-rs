@@ -12,7 +12,7 @@ use std::path::PathBuf;
 #[cfg(feature = "logging")]
 use tracing::debug;
 
-use crate::ffi::{inCleanup, inInit, inViewportGet, inViewportSet, types::InTimingFunc};
+use crate::ffi::{inCleanup, inUpdate, inInit, inViewportGet, inViewportSet, types::InTimingFunc};
 
 pub struct Inochi2D {
     pub puppets: Vec<Inochi2DPuppet>,
@@ -126,6 +126,22 @@ impl Inochi2D {
         self.view_height = viewport_height;
 
         (viewport_width, viewport_height)
+    }
+
+
+
+    /// Update current Inochi2D context
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut ctx = Inochi2D::new(/* ... */);
+    /// ctx.update();
+    /// ~~~
+    pub fn update(&mut self) {
+        unsafe {
+            inUpdate();
+        }
     }
 
     /// Initialize a new Inochi2D context.

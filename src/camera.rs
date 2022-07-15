@@ -22,6 +22,16 @@ pub struct Inochi2DCamera {
 }
 
 impl Inochi2DCamera {
+    /// Set Inochi2D Camera Zoom
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// camera.set_zoom(0.15);
+    /// ~~~
+    ///
     pub fn set_zoom(&mut self, zoom: f32) {
         #[cfg(feature = "logging")]
         debug!("Setting camera zoom to: {}", zoom);
@@ -32,6 +42,20 @@ impl Inochi2DCamera {
         self.zoom = zoom;
     }
 
+    /// Gets the Inochi2D Camera Zoom
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// let zoom: f32 = camera.get_zoom();
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A single `f32` which describes the cameras zoom.
+    ///
     pub fn get_zoom(&mut self) -> f32 {
         let mut _z: f32 = 0.0;
         unsafe {
@@ -42,6 +66,16 @@ impl Inochi2DCamera {
         _z
     }
 
+    /// Set Inochi2D Camera Position
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// camera.set_pos(0.50, 0.25);
+    /// ~~~
+    ///
     pub fn set_pos(&mut self, x: f32, y: f32) {
         #[cfg(feature = "logging")]
         debug!("Setting camera position to: ({}, {})", x, y);
@@ -53,6 +87,23 @@ impl Inochi2DCamera {
         self.y = y;
     }
 
+    /// Get the Inochi2D Camera Position
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// let pos = camera.get_pos();
+    ///
+    /// println!("Camera is at {} {}", pos.0, pos.1);
+    ///
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A tuple with two `f32` elements describing the cameras X and Y
+    ///
     pub fn get_pos(&mut self) -> (f32, f32) {
         let mut _x: f32 = 0.0;
         let mut _y: f32 = 0.0;
@@ -67,6 +118,103 @@ impl Inochi2DCamera {
         (_x, _y)
     }
 
+    /// Get the Inochi2D Camera position offset
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// let pos = camera.get_offset();
+    ///
+    /// println!("Camera's offset is {} {}", pos.0, pos.1);
+    ///
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A tuple with two `f32` elements describing the cameras X and Y offset
+    ///
+    pub fn get_offset(&mut self) -> (f32, f32) {
+        let mut _x: f32 = 0.0;
+        let mut _y: f32 = 0.0;
+
+        unsafe {
+            inCameraGetCenterOffset(self.handle, &mut _x, &mut _y);
+        }
+
+        (_x, _y)
+    }
+
+    /// Get the Inochi2D Camera's real size
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// let sz = camera.get_real_size();
+    ///
+    /// println!("Camera's real size is {} {}", pos.0, pos.1);
+    ///
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A tuple with two `f32` elements describing the cameras real size in X and Y
+    ///
+    pub fn get_real_size(&mut self) -> (f32, f32) {
+        let mut _x: f32 = 0.0;
+        let mut _y: f32 = 0.0;
+
+        unsafe {
+            inCameraGetRealSize(self.handle, &mut _x, &mut _y);
+        }
+
+        (_x, _y)
+    }
+
+    /// Get the Inochi2D Camera's matrix
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(/* ... */);
+    ///
+    /// let matrix = camera.get_matrix();
+    /// ~~~
+    ///
+    /// # Returns
+    ///
+    /// A an array with 16 `f32` elements describing the cameras matrix
+    ///
+    pub fn get_matrix(&mut self) -> [f32; 16] {
+        let mut matrix: [f32; 16] = [0.0; 16];
+
+        unsafe {
+            inCameraGetMatrix(self.handle, &mut matrix);
+        }
+
+        matrix
+    }
+
+    /// Get the current Inochi2D camera and optionally set it's zoom and position
+    ///
+    /// # Example
+    ///
+    /// ~~~no_run
+    /// let mut camera = Inochi2DCamera::new(
+    ///     Some(0.15), None, None
+    /// );
+    ///
+    /// ~~~
+    ///
+    ///
+    /// # Returns
+    ///
+    /// A new `Inochi2DCamera`
+    ///
+    ///
     pub fn new(zoom: Option<f32>, x: Option<f32>, y: Option<f32>) -> Self {
         unsafe {
             let hndl = inCameraGetCurrent();

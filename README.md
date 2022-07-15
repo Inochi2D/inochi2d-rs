@@ -3,7 +3,7 @@
 This repository contains the (preliminary) Rust bindings for Inochi2D using the [Inochi2D C SDK](https://github.com/Inochi2D/inochi2d-c).
 
 
-**NOTE** The bindings pull in a large chunk of the D runtime, including the Garbage Collector.
+**NOTE:** The bindings pull in a large chunk of the D runtime, including the Garbage Collector.
 
 ## Building
 
@@ -21,6 +21,8 @@ $ cargo build
 ## Examples
 
 To build the examples, make sure you have the submodules checked out to ensure the example Inochi2D puppets are where the examples expect them to be.
+
+**NOTE:** You need [git lfs](https://git-lfs.github.com/) in order to properly clone the example models
 
 You can run the main OpenGL example with:
 ```
