@@ -31,6 +31,24 @@ pub struct Inochi2DBuilder {
     puppets: Vec<PathBuf>,
 }
 
+#[cfg(feature = "monotonic")]
+use std::sync::Mutex;
+#[cfg(feature = "monotonic")]
+use std::time::Instant;
+
+/* A hacky Monotonic clock for Inochi2D */
+#[cfg(feature = "monotonic")]
+pub extern "C" fn MONOTONIC_CLOCK() -> f64 {
+    static mut START: Option<Mutex<Instant>> = None;
+    if let Some(mutex) = unsafe { &START } {
+        let start = mutex.lock().unwrap();
+        Instant::now().duration_since(*start).as_secs_f64()
+    } else {
+        unsafe { START.replace(Mutex::new(Instant::now())) };
+        0.0_f64
+    }
+}
+
 impl<'a> Inochi2DBuilder {
     /// Creates a new Inochi2D context builder.
     ///

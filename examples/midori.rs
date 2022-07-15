@@ -14,25 +14,12 @@ extern crate tracing_subscriber;
 use std::path::PathBuf;
 
 use glfw::Context;
-use inochi2d_rs::{camera::Inochi2DCamera, scene::Inochi2DScene, Inochi2DBuilder};
+use inochi2d_rs::{camera::Inochi2DCamera, scene::Inochi2DScene, Inochi2DBuilder, MONOTONIC_CLOCK};
 
 #[cfg(feature = "logging")]
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*};
 
-use std::sync::Mutex;
-use std::time::Instant;
 
-/* Cursed Monotonic timer */
-extern "C" fn get_time() -> f64 {
-    static mut START: Option<Mutex<Instant>> = None;
-    if let Some(mutex) = unsafe { &START } {
-        let start = mutex.lock().unwrap();
-        Instant::now().duration_since(*start).as_secs_f64()
-    } else {
-        unsafe { START.replace(Mutex::new(Instant::now())) };
-        0.0_f64
-    }
-}
 
 fn main() {
     /* You can ignore this, it's used for debug logging and is optional */
@@ -60,9 +47,8 @@ fn main() {
     win.make_current();
 
     /* Make sure GL and GLFW can talk to each other */
-    unsafe {
-        gl::load_with(|s| glfw.get_proc_address_raw(s));
-    }
+    gl::load_with(|s| glfw.get_proc_address_raw(s));
+
 
     /* Setup polling for the window events we care about */
     win.set_key_polling(true);
@@ -72,7 +58,7 @@ fn main() {
     /* Create a new Inochi2D context via the builder */
     let mut ctx = Inochi2DBuilder::new()
         .viewport(800, 800)
-        .timing(get_time)
+        .timing(MONOTONIC_CLOCK)
         .puppet(PathBuf::from("./examples/models/Midori.inx"))
         .build()
         .unwrap();
@@ -108,7 +94,7 @@ fn main() {
                 }
                 glfw::WindowEvent::Scroll(_, vert) => {
                     /* Allow us to zoom with the scroll wheel */
-                    zoom += (vert * 0.01);
+                    zoom += vert * 0.01;
                     zoom = zoom.clamp(0.01, 10.0);
                     cam.set_zoom(zoom as f32);
                 }

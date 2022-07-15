@@ -15,26 +15,11 @@ use std::path::PathBuf;
 
 use glfw::Context;
 use inochi2d_rs::{
-    camera::Inochi2DCamera, core::Inochi2D, puppet::Inochi2DPuppet, scene::Inochi2DScene,
+    camera::Inochi2DCamera, core::Inochi2D, puppet::Inochi2DPuppet, scene::Inochi2DScene, MONOTONIC_CLOCK
 };
 
 #[cfg(feature = "logging")]
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*};
-
-use std::sync::Mutex;
-use std::time::Instant;
-
-/* Cursed Monotonic timer */
-extern "C" fn get_time() -> f64 {
-    static mut START: Option<Mutex<Instant>> = None;
-    if let Some(mutex) = unsafe { &START } {
-        let start = mutex.lock().unwrap();
-        Instant::now().duration_since(*start).as_secs_f64()
-    } else {
-        unsafe { START.replace(Mutex::new(Instant::now())) };
-        0.0_f64
-    }
-}
 
 fn main() {
     /* You can ignore this, it's used for debug logging and is optional */
@@ -70,7 +55,7 @@ fn main() {
     win.set_scroll_polling(true);
 
     /* Create a new Inochi2D context */
-    let mut ctx = Inochi2D::new(get_time, 800, 800);
+    let mut ctx = Inochi2D::new(MONOTONIC_CLOCK, 800, 800);
     /* Create a new Inochi2D puppet from a file */
     let mut puppet = Inochi2DPuppet::new(PathBuf::from("./examples/models/Aka.inx"));
 

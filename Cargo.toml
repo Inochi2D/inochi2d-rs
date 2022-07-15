@@ -22,8 +22,9 @@ description = "Rust bindings for Inochi2D"
 
 
 [features]
-default = ["opengl", "logging"]
+default = ["opengl", "logging", "monotonic"]
 logging = ["tracing"]
+monotonic = []
 opengl = []
 nightly = []
 
