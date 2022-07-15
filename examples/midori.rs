@@ -101,6 +101,8 @@ fn main() {
                 _ => {}
             }
         }
+        /* Update the context */
+        ctx.update();
         /* Update and then draw all the loaded puppets */
         ctx.update_puppets();
         ctx.draw_puppets();

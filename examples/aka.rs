@@ -97,6 +97,7 @@ fn main() {
                 _ => {}
             }
         }
+
         /* Update and then draw the puppet */
         puppet.update();
         puppet.draw();
