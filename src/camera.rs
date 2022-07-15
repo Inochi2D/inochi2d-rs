@@ -6,12 +6,12 @@
 */
 
 #[cfg(feature = "logging")]
-use tracing::{debug, error, info, warn};
+use tracing::debug;
 
 use crate::ffi::{
     inCameraDestroy, inCameraGetCenterOffset, inCameraGetCurrent, inCameraGetMatrix,
     inCameraGetPosition, inCameraGetRealSize, inCameraGetZoom, inCameraSetPosition,
-    inCameraSetZoom, Types::InCameraPtr,
+    inCameraSetZoom, types::InCameraPtr,
 };
 
 pub struct Inochi2DCamera {
@@ -94,10 +94,8 @@ impl Inochi2DCamera {
                 cam_x, cam_y, cam_zoom
             );
 
-            unsafe {
-                inCameraSetZoom(hndl, cam_zoom);
-                inCameraSetPosition(hndl, cam_x, cam_y);
-            }
+            inCameraSetZoom(hndl, cam_zoom);
+            inCameraSetPosition(hndl, cam_x, cam_y);
 
             Inochi2DCamera {
                 handle: hndl,

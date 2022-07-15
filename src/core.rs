@@ -10,9 +10,9 @@ use crate::puppet::Inochi2DPuppet;
 use std::path::PathBuf;
 
 #[cfg(feature = "logging")]
-use tracing::{debug, error, info, warn};
+use tracing::debug;
 
-use crate::ffi::{inCleanup, inInit, inViewportGet, inViewportSet, Types::InTimingFunc};
+use crate::ffi::{inCleanup, inInit, inViewportGet, inViewportSet, types::InTimingFunc};
 
 pub struct Inochi2D {
     pub puppets: Vec<Inochi2DPuppet>,

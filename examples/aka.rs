@@ -62,9 +62,7 @@ fn main() {
     win.make_current();
 
     /* Make sure GL and GLFW can talk to each other */
-    unsafe {
-        gl::load_with(|s| glfw.get_proc_address_raw(s));
-    }
+    gl::load_with(|s| glfw.get_proc_address_raw(s));
 
     /* Setup polling for the window events we care about */
     win.set_key_polling(true);
@@ -107,7 +105,7 @@ fn main() {
                 }
                 glfw::WindowEvent::Scroll(_, vert) => {
                     /* Allow us to zoom with the scroll wheel */
-                    zoom += (vert * 0.01);
+                    zoom += vert * 0.01;
                     zoom = zoom.clamp(0.01, 10.0);
                     cam.set_zoom(zoom as f32);
                 }

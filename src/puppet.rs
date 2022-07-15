@@ -8,13 +8,13 @@
 use std::path::PathBuf;
 
 #[cfg(feature = "logging")]
-use tracing::{debug, error, info, warn};
+use tracing::debug;
 
 #[cfg(feature = "opengl")]
 use crate::ffi::inPuppetDraw;
 use crate::ffi::{
     inPuppetDestroy, inPuppetGetName, inPuppetLoad, inPuppetLoadEx, inPuppetLoadFromMemory,
-    inPuppetUpdate, Types::InPuppetPtr,
+    inPuppetUpdate, types::InPuppetPtr,
 };
 
 pub struct Inochi2DPuppet {
@@ -35,7 +35,7 @@ impl Inochi2DPuppet {
         }
     }
 
-    pub fn new(mut puppet: PathBuf) -> Self {
+    pub fn new(puppet: PathBuf) -> Self {
         let puppet_path = String::from(puppet.to_str().expect("Unable to get puppet path"));
         #[cfg(feature = "logging")]
         debug!("Constructing puppet from file {}", puppet_path);

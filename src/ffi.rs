@@ -5,7 +5,7 @@
     Authors: Aki "lethalbit" Van Ness
 */
 
-pub mod Types {
+pub mod types {
     #[repr(C)]
     pub struct InError {
         len: usize,
@@ -26,7 +26,7 @@ pub mod Types {
 
 extern "C" {
     /* Core Functionality */
-    pub fn inInit(timing: Types::InTimingFunc);
+    pub fn inInit(timing: types::InTimingFunc);
     pub fn inCleanup();
     pub fn inViewportSet(width: i32, height: i32);
     pub fn inViewportGet(width: *mut i32, height: *mut i32);
@@ -39,23 +39,23 @@ extern "C" {
     pub fn inSceneDraw(x: f32, y: f32, width: f32, height: f32);
 
     /* Cameras */
-    pub fn inCameraGetCurrent() -> Types::InCameraPtr;
-    pub fn inCameraDestroy(camera: Types::InCameraPtr);
-    pub fn inCameraGetPosition(camera: Types::InCameraPtr, x: *mut f32, y: *mut f32);
-    pub fn inCameraSetPosition(camera: Types::InCameraPtr, x: f32, y: f32);
-    pub fn inCameraGetZoom(camera: Types::InCameraPtr, zoom: *mut f32);
-    pub fn inCameraSetZoom(camera: Types::InCameraPtr, zoom: f32);
-    pub fn inCameraGetCenterOffset(camera: Types::InCameraPtr, x: *mut f32, y: *mut f32);
-    pub fn inCameraGetRealSize(camera: Types::InCameraPtr, x: *mut f32, y: *mut f32);
-    pub fn inCameraGetMatrix(camera: Types::InCameraPtr, mat4: *mut f32);
+    pub fn inCameraGetCurrent() -> types::InCameraPtr;
+    pub fn inCameraDestroy(camera: types::InCameraPtr);
+    pub fn inCameraGetPosition(camera: types::InCameraPtr, x: *mut f32, y: *mut f32);
+    pub fn inCameraSetPosition(camera: types::InCameraPtr, x: f32, y: f32);
+    pub fn inCameraGetZoom(camera: types::InCameraPtr, zoom: *mut f32);
+    pub fn inCameraSetZoom(camera: types::InCameraPtr, zoom: f32);
+    pub fn inCameraGetCenterOffset(camera: types::InCameraPtr, x: *mut f32, y: *mut f32);
+    pub fn inCameraGetRealSize(camera: types::InCameraPtr, x: *mut f32, y: *mut f32);
+    pub fn inCameraGetMatrix(camera: types::InCameraPtr, mat4: *mut f32);
 
     /* Puppets */
-    pub fn inPuppetLoad(path: *const u8) -> Types::InPuppetPtr;
-    pub fn inPuppetLoadEx(path: *const u8, len: usize) -> Types::InPuppetPtr;
-    pub fn inPuppetLoadFromMemory(data: *const u8, len: usize) -> Types::InPuppetPtr;
-    pub fn inPuppetDestroy(puppet: Types::InPuppetPtr);
-    pub fn inPuppetGetName(puppet: Types::InPuppetPtr, name: *const u8, len: *const usize);
-    pub fn inPuppetUpdate(puppet: Types::InPuppetPtr);
+    pub fn inPuppetLoad(path: *const u8) -> types::InPuppetPtr;
+    pub fn inPuppetLoadEx(path: *const u8, len: usize) -> types::InPuppetPtr;
+    pub fn inPuppetLoadFromMemory(data: *const u8, len: usize) -> types::InPuppetPtr;
+    pub fn inPuppetDestroy(puppet: types::InPuppetPtr);
+    pub fn inPuppetGetName(puppet: types::InPuppetPtr, name: *const u8, len: *const usize);
+    pub fn inPuppetUpdate(puppet: types::InPuppetPtr);
     #[cfg(feature = "opengl")]
-    pub fn inPuppetDraw(puppet: Types::InPuppetPtr);
+    pub fn inPuppetDraw(puppet: types::InPuppetPtr);
 }
