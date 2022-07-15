@@ -22,12 +22,14 @@ description = "Rust bindings for Inochi2D"
 
 
 [features]
-default = ["opengl"]
+default = ["opengl", "logging"]
+logging = ["tracing"]
 opengl = []
 nightly = []
 
 [dependencies]
 libc = "0.2"
+tracing = { version = "0.1.35", optional = true }
 
 [build-dependencies]
 cc = { version = "1.0", features = ["parallel"] }
@@ -35,3 +37,4 @@ cc = { version = "1.0", features = ["parallel"] }
 [dev-dependencies]
 glfw = "0.45.0"
 gl = "0.14.0"
+tracing-subscriber = "0.3.14"
