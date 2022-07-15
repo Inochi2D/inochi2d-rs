@@ -8,20 +8,14 @@
 use crate::puppet::Inochi2DPuppet;
 
 use std::path::PathBuf;
-mod binding {
-    /* Types */
-    create_opaque_type!(InRenderable);
 
-    pub type InTimingFunc = extern "C" fn() -> f64;
-
-    /* Functions */
-    extern "C" {
-        pub fn inCleanup();
-        pub fn inInit(timing: InTimingFunc);
-        pub fn inViewportSet(width: i32, height: i32);
-        pub fn inViewportGet(width: *mut i32, height: *mut i32);
-    }
-}
+use crate::ffi::{
+    Types::InTimingFunc,
+    inInit,
+    inCleanup,
+    inViewportGet,
+    inViewportSet
+};
 
 pub struct Inochi2D {
     pub puppets: Vec<Inochi2DPuppet>,
@@ -94,7 +88,7 @@ impl Inochi2D {
     ///
     pub fn set_viewport(&mut self, w: i32, h: i32) {
         unsafe {
-            binding::inViewportSet(w, h);
+            inViewportSet(w, h);
         }
         self.view_width = w;
         self.view_height = h;
@@ -122,7 +116,7 @@ impl Inochi2D {
         let mut viewport_height: i32 = 0;
 
         unsafe {
-            binding::inViewportGet(&mut viewport_width, &mut viewport_height);
+            inViewportGet(&mut viewport_width, &mut viewport_height);
         }
 
         self.view_width = viewport_width;
@@ -144,10 +138,10 @@ impl Inochi2D {
     ///
     /// A new `Inochi2D` context.
     ///
-    pub fn new(timing: binding::InTimingFunc, w: i32, h: i32) -> Self {
+    pub fn new(timing: InTimingFunc, w: i32, h: i32) -> Self {
         unsafe {
-            binding::inInit(timing);
-            binding::inViewportSet(w, h);
+            inInit(timing);
+            inViewportSet(w, h);
 
             Inochi2D {
                 puppets: Vec::new(),
@@ -164,7 +158,7 @@ impl Drop for Inochi2D {
         self.puppets.clear();
 
         unsafe {
-            binding::inCleanup();
+            inCleanup();
         }
     }
 }

@@ -5,13 +5,11 @@
     Authors: Aki "lethalbit" Van Ness
 */
 
-mod binding {
-    extern "C" {
-        pub fn inSceneBegin();
-        pub fn inSceneEnd();
-        pub fn inSceneDraw(x: f32, y: f32, width: f32, height: f32);
-    }
-}
+use crate::ffi::{
+    inSceneBegin,
+    inSceneEnd,
+    inSceneDraw
+};
 
 pub struct Inochi2DScene {}
 
