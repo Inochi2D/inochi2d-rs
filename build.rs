@@ -8,6 +8,11 @@ use std::{
 const INOCHI2D_REPO: &'static str = "https://github.com/Inochi2D/inochi2d.git";
 const INOCHI2D_C_REPO: &'static str = "https://github.com/Inochi2D/inochi2d-c.git";
 
+#[cfg(feature = "opengl")]
+const WITH_OPENGL: bool = true;
+#[cfg(not(feature = "opengl"))]
+const WITH_OPENGL: bool = false;
+
 
 fn clone_repo(repo: &'static str, name: &'static str) -> PathBuf {
     let outdir = PathBuf::from(env::var("OUT_DIR").unwrap()).join(name);
@@ -69,8 +74,13 @@ fn main() {
 
     if !libdir.join("libinochi2d-c.so").exists() {
         dub_init();
-        dub_build(&inochi2d, "full");
-        dub_build(&inochi2d_c, "yesgl");
+        if WITH_OPENGL {
+            dub_build(&inochi2d, "full");
+            dub_build(&inochi2d_c, "yesgl");
+        } else {
+            dub_build(&inochi2d, "renderless");
+            dub_build(&inochi2d_c, "nogl");
+        }
     }
 
     println!("cargo:rustc-link-lib=inochi2d-c");
