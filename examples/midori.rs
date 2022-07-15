@@ -14,14 +14,10 @@ extern crate tracing_subscriber;
 use std::path::PathBuf;
 
 use glfw::Context;
-use inochi2d_rs::{
-    Inochi2DBuilder,
-    camera::Inochi2DCamera,
-    scene::Inochi2DScene,
-};
+use inochi2d_rs::{camera::Inochi2DCamera, scene::Inochi2DScene, Inochi2DBuilder};
 
 #[cfg(feature = "logging")]
-use tracing_subscriber::{ filter::LevelFilter, fmt, prelude::*};
+use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*};
 
 use std::sync::Mutex;
 use std::time::Instant;
@@ -51,8 +47,9 @@ fn main() {
 
     /* Set OpenGL window hints */
     glfw.window_hint(glfw::WindowHint::ContextVersion(4, 1));
-    glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
-
+    glfw.window_hint(glfw::WindowHint::OpenGlProfile(
+        glfw::OpenGlProfileHint::Core,
+    ));
 
     /* Create a new window for us to render in */
     let (mut win, events) = glfw

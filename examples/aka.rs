@@ -15,14 +15,11 @@ use std::path::PathBuf;
 
 use glfw::Context;
 use inochi2d_rs::{
-    core::Inochi2D,
-    puppet::Inochi2DPuppet,
-    camera::Inochi2DCamera,
-    scene::Inochi2DScene,
+    camera::Inochi2DCamera, core::Inochi2D, puppet::Inochi2DPuppet, scene::Inochi2DScene,
 };
 
 #[cfg(feature = "logging")]
-use tracing_subscriber::{ filter::LevelFilter, fmt, prelude::*};
+use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*};
 
 use std::sync::Mutex;
 use std::time::Instant;
@@ -52,8 +49,9 @@ fn main() {
 
     /* Set OpenGL window hints */
     glfw.window_hint(glfw::WindowHint::ContextVersion(4, 1));
-    glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
-
+    glfw.window_hint(glfw::WindowHint::OpenGlProfile(
+        glfw::OpenGlProfileHint::Core,
+    ));
 
     /* Create a new window for us to render in */
     let (mut win, events) = glfw
@@ -73,12 +71,10 @@ fn main() {
     win.set_framebuffer_size_polling(true);
     win.set_scroll_polling(true);
 
-
     /* Create a new Inochi2D context */
     let mut ctx = Inochi2D::new(get_time, 800, 800);
     /* Create a new Inochi2D puppet from a file */
     let mut puppet = Inochi2DPuppet::new(PathBuf::from("./examples/models/Aka.inx"));
-
 
     /* Setup the camera and zoom */
     let mut zoom: f64 = 0.15;

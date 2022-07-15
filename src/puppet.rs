@@ -8,19 +8,14 @@
 use std::path::PathBuf;
 
 #[cfg(feature = "logging")]
-use tracing::{debug, error, info,warn};
+use tracing::{debug, error, info, warn};
 
-use crate::ffi::{
-    Types::InPuppetPtr,
-    inPuppetLoad,
-    inPuppetLoadEx,
-    inPuppetLoadFromMemory,
-    inPuppetDestroy,
-    inPuppetGetName,
-    inPuppetUpdate
-};
 #[cfg(feature = "opengl")]
 use crate::ffi::inPuppetDraw;
+use crate::ffi::{
+    inPuppetDestroy, inPuppetGetName, inPuppetLoad, inPuppetLoadEx, inPuppetLoadFromMemory,
+    inPuppetUpdate, Types::InPuppetPtr,
+};
 
 pub struct Inochi2DPuppet {
     handle: InPuppetPtr,

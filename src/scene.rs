@@ -5,11 +5,7 @@
     Authors: Aki "lethalbit" Van Ness
 */
 
-use crate::ffi::{
-    inSceneBegin,
-    inSceneEnd,
-    inSceneDraw
-};
+use crate::ffi::{inSceneBegin, inSceneDraw, inSceneEnd};
 
 pub struct Inochi2DScene {}
 
@@ -22,7 +18,7 @@ impl Inochi2DScene {
         Inochi2DScene {}
     }
 
-    pub fn draw(&mut self, x: f32, y: f32, width: f32, height: f32){
+    pub fn draw(&mut self, x: f32, y: f32, width: f32, height: f32) {
         unsafe {
             inSceneEnd();
             inSceneDraw(x, y, width, height);

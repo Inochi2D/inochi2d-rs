@@ -6,19 +6,12 @@
 */
 
 #[cfg(feature = "logging")]
-use tracing::{debug, error, info,warn};
+use tracing::{debug, error, info, warn};
 
 use crate::ffi::{
-    Types::InCameraPtr,
-    inCameraDestroy,
-    inCameraGetCenterOffset,
-    inCameraGetCurrent,
-    inCameraGetMatrix,
-    inCameraGetPosition,
-    inCameraGetRealSize,
-    inCameraGetZoom,
-    inCameraSetPosition,
-    inCameraSetZoom
+    inCameraDestroy, inCameraGetCenterOffset, inCameraGetCurrent, inCameraGetMatrix,
+    inCameraGetPosition, inCameraGetRealSize, inCameraGetZoom, inCameraSetPosition,
+    inCameraSetZoom, Types::InCameraPtr,
 };
 
 pub struct Inochi2DCamera {
@@ -96,7 +89,10 @@ impl Inochi2DCamera {
                 _y
             });
             #[cfg(feature = "logging")]
-            debug!("Creating new camera (x: {} y: {} zoom: {})", cam_x, cam_y, cam_zoom);
+            debug!(
+                "Creating new camera (x: {} y: {} zoom: {})",
+                cam_x, cam_y, cam_zoom
+            );
 
             unsafe {
                 inCameraSetZoom(hndl, cam_zoom);
@@ -114,7 +110,6 @@ impl Inochi2DCamera {
 }
 
 impl Drop for Inochi2DCamera {
-
     fn drop(&mut self) {
         #[cfg(feature = "logging")]
         debug!("Destroying camera");
