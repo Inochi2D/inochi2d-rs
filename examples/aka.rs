@@ -24,9 +24,19 @@ use inochi2d_rs::{
 #[cfg(feature = "logging")]
 use tracing_subscriber::{ filter::LevelFilter, fmt, prelude::*};
 
+use std::sync::Mutex;
+use std::time::Instant;
 
+/* Cursed Monotonic timer */
 extern "C" fn get_time() -> f64 {
-    0.0
+    static mut START: Option<Mutex<Instant>> = None;
+    if let Some(mutex) = unsafe { &START } {
+        let start = mutex.lock().unwrap();
+        Instant::now().duration_since(*start).as_secs_f64()
+    } else {
+        unsafe { START.replace(Mutex::new(Instant::now())) };
+        0.0_f64
+    }
 }
 
 fn main() {
