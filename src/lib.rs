@@ -14,6 +14,8 @@
 #[macro_use]
 mod macros;
 
+mod ffi;
+
 pub mod camera;
 pub mod core;
 pub mod puppet;
