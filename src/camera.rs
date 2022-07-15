@@ -5,6 +5,9 @@
     Authors: Aki "lethalbit" Van Ness
 */
 
+#[cfg(feature = "logging")]
+use tracing::{debug, error, info,warn};
+
 use crate::ffi::{
     Types::InCameraPtr,
     inCameraDestroy,
@@ -27,6 +30,8 @@ pub struct Inochi2DCamera {
 
 impl Inochi2DCamera {
     pub fn set_zoom(&mut self, zoom: f32) {
+        #[cfg(feature = "logging")]
+        debug!("Setting camera zoom to: {}", zoom);
         unsafe {
             inCameraSetZoom(self.handle, zoom);
         }
@@ -44,7 +49,9 @@ impl Inochi2DCamera {
         _z
     }
 
-    pub fn sett_pos(&mut self, x: f32, y: f32) {
+    pub fn set_pos(&mut self, x: f32, y: f32) {
+        #[cfg(feature = "logging")]
+        debug!("Setting camera position to: ({}, {})", x, y);
         unsafe {
             inCameraSetPosition(self.handle, x, y);
         }
@@ -88,6 +95,9 @@ impl Inochi2DCamera {
                 inCameraGetPosition(hndl, &mut _x, &mut _y);
                 _y
             });
+            #[cfg(feature = "logging")]
+            debug!("Creating new camera (x: {} y: {} zoom: {})", cam_x, cam_y, cam_zoom);
+
 
             Inochi2DCamera {
                 handle: hndl,
@@ -100,7 +110,10 @@ impl Inochi2DCamera {
 }
 
 impl Drop for Inochi2DCamera {
+
     fn drop(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Destroying camera");
         unsafe {
             inCameraDestroy(self.handle);
         }

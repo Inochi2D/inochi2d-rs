@@ -7,6 +7,9 @@
 
 use std::path::PathBuf;
 
+#[cfg(feature = "logging")]
+use tracing::{debug, error, info,warn};
+
 use crate::ffi::{
     Types::InPuppetPtr,
     inPuppetLoad,
@@ -19,7 +22,6 @@ use crate::ffi::{
 #[cfg(feature = "opengl")]
 use crate::ffi::inPuppetDraw;
 
-
 pub struct Inochi2DPuppet {
     handle: InPuppetPtr,
     pub name: String,
@@ -27,6 +29,8 @@ pub struct Inochi2DPuppet {
 
 impl Inochi2DPuppet {
     pub fn from(buffer: *const u8, size: usize, name: Option<String>) -> Self {
+        #[cfg(feature = "logging")]
+        debug!("Constructing puppet from {} bytes", size);
         unsafe {
             let hndl = inPuppetLoadFromMemory(buffer, size);
             Inochi2DPuppet {
@@ -38,6 +42,8 @@ impl Inochi2DPuppet {
 
     pub fn new(mut puppet: PathBuf) -> Self {
         let puppet_path = String::from(puppet.to_str().expect("Unable to get puppet path"));
+        #[cfg(feature = "logging")]
+        debug!("Constructing puppet from file {}", puppet_path);
 
         unsafe {
             let hndl = inPuppetLoadEx(puppet_path.as_ptr(), puppet_path.len());
@@ -50,6 +56,9 @@ impl Inochi2DPuppet {
     }
 
     pub fn update(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Updating puppet {}", self.name);
+
         unsafe {
             inPuppetUpdate(self.handle);
         }
@@ -57,6 +66,9 @@ impl Inochi2DPuppet {
 
     #[cfg(feature = "opengl")]
     pub fn draw(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Drawing puppet {}", self.name);
+
         unsafe {
             inPuppetDraw(self.handle);
         }
@@ -65,6 +77,9 @@ impl Inochi2DPuppet {
 
 impl Drop for Inochi2DPuppet {
     fn drop(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Disposing of puppet {}", self.name);
+
         unsafe {
             inPuppetDestroy(self.handle);
         }

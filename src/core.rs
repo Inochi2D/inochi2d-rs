@@ -9,6 +9,9 @@ use crate::puppet::Inochi2DPuppet;
 
 use std::path::PathBuf;
 
+#[cfg(feature = "logging")]
+use tracing::{debug, error, info,warn};
+
 use crate::ffi::{
     Types::InTimingFunc,
     inInit,
@@ -52,6 +55,8 @@ impl Inochi2D {
     /// ~~~
     ///
     pub fn update_puppets(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Updating all puppets");
         for p in self.puppets.iter_mut() {
             p.update()
         }
@@ -70,6 +75,8 @@ impl Inochi2D {
     ///
     #[cfg(feature = "opengl")]
     pub fn draw_puppets(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Drawing all puppets");
         for p in self.puppets.iter_mut() {
             p.draw()
         }
@@ -87,6 +94,8 @@ impl Inochi2D {
     /// ~~~
     ///
     pub fn set_viewport(&mut self, w: i32, h: i32) {
+        #[cfg(feature = "logging")]
+        debug!("Setting viewport to {}x{}", w, h);
         unsafe {
             inViewportSet(w, h);
         }
@@ -139,6 +148,9 @@ impl Inochi2D {
     /// A new `Inochi2D` context.
     ///
     pub fn new(timing: InTimingFunc, w: i32, h: i32) -> Self {
+        #[cfg(feature = "logging")]
+        debug!("Constructing Inochi2D");
+
         unsafe {
             inInit(timing);
             inViewportSet(w, h);
@@ -155,6 +167,8 @@ impl Inochi2D {
 
 impl Drop for Inochi2D {
     fn drop(&mut self) {
+        #[cfg(feature = "logging")]
+        debug!("Disposing of Inochi2D");
         self.puppets.clear();
 
         unsafe {
