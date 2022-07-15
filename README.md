@@ -26,6 +26,7 @@ You can run the main OpenGL example with:
 ```
 $ cargo run --example midori
 ```
+**NOTE:** You need the `libinochi2d-c.so` library in your `LD_LIBRARY_PATH` to run the examples
 
 ## License
 
