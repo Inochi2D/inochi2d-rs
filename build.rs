@@ -51,6 +51,7 @@ fn dub_build(dir: &PathBuf, cfg: &'static str) {
     let dub_status = Command::new("dub")
         .current_dir(dir)
         .arg("build")
+        .arg("--compiler=ldc2")
         .arg("--non-interactive")
         .arg("--config")
         .arg(cfg)
