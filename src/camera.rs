@@ -98,6 +98,10 @@ impl Inochi2DCamera {
             #[cfg(feature = "logging")]
             debug!("Creating new camera (x: {} y: {} zoom: {})", cam_x, cam_y, cam_zoom);
 
+            unsafe {
+                inCameraSetZoom(hndl, cam_zoom);
+                inCameraSetPosition(hndl, cam_x, cam_y);
+            }
 
             Inochi2DCamera {
                 handle: hndl,
