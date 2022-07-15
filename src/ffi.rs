@@ -24,6 +24,7 @@ pub mod types {
     pub type InTimingFunc = extern "C" fn() -> f64;
 }
 
+#[link(name = "inochi2d-c", kind = "dylib")]
 extern "C" {
     /* Core Functionality */
     pub fn inInit(timing: types::InTimingFunc);
