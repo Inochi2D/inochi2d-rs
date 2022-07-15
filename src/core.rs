@@ -6,6 +6,7 @@
 */
 
 use crate::puppet::Inochi2DPuppet;
+use crate::Result;
 
 use std::path::PathBuf;
 
@@ -33,8 +34,10 @@ impl Inochi2D {
     ///
     /// ~~~
     ///
-    pub fn add_puppet(&mut self, puppet: PathBuf) {
-        self.puppets.push(Inochi2DPuppet::new(puppet))
+    pub fn add_puppet(&mut self, puppet: PathBuf) -> Result<()> {
+        self.puppets.push(Inochi2DPuppet::new(puppet)?);
+
+        Ok(())
     }
 
     /// Update all puppets in the current context.
