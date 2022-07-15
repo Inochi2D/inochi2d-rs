@@ -74,5 +74,5 @@ fn main() {
     }
 
     println!("cargo:rustc-link-lib=inochi2d-c");
-    println!("cargo:rustc-link-search={}", libdir.display());
+    println!("cargo:rustc-link-search=native={}", libdir.display());
 }
