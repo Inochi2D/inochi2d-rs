@@ -67,11 +67,12 @@ fn main() {
             dub_build(&inochi2d, "full");
             dub_build(&inochi2d_c, "yesgl");
         } else {
+            println!("cargo:warning=Building without OpenGL support");
             dub_build(&inochi2d, "renderless");
             dub_build(&inochi2d_c, "nogl");
         }
     }
 
     println!("cargo:rustc-link-lib=inochi2d-c");
-    println!("cargo:rustc-link-arg=-L{}", libdir.display());
+    println!("cargo:rustc-link-search={}", libdir.display());
 }
