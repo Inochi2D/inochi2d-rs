@@ -1,4 +1,5 @@
 #![cfg_attr(feature = "nightly", feature(extern_types))]
+#![allow(unsafe_op_in_unsafe_fn, unused_unsafe)]
 /*
     Copyright © 2022, Inochi2D Project
     Distributed under the 2-Clause BSD License, see LICENSE file.
@@ -24,6 +25,8 @@ pub mod scene;
 
 use crate::core::Inochi2D;
 use std::path::PathBuf;
+
+pub type Result<T> = std::result::Result<T, String>;
 
 pub struct Inochi2DBuilder {
     viewport_size: (i32, i32),
@@ -149,11 +152,11 @@ impl<'a> Inochi2DBuilder {
     /// # Returns
     ///
     /// - If initialization was successful a `Inochi2D` context.
-    /// - If errors occurred an `Err(())` will be returned.
+    /// - If an error occurred a string indicating the error will be returned.
     ///
-    pub fn build(self) -> Result<Inochi2D, ()> {
+    pub fn build(self) -> Result<Inochi2D> {
         if self.time_func.is_none() {
-            Err(())
+            Err("timing mut be called before build!".into())
         } else {
             let mut ctx = Inochi2D::new(
                 self.time_func.unwrap(),
@@ -162,7 +165,7 @@ impl<'a> Inochi2DBuilder {
             );
 
             for p in self.puppets {
-                ctx.add_puppet(p);
+                ctx.add_puppet(p)?;
             }
 
             Ok(ctx)

@@ -10,6 +10,11 @@ use std::path::PathBuf;
 #[cfg(feature = "logging")]
 use tracing::debug;
 
+use crate::{
+    ffi::{inErrorGet, types::InPuppet},
+    Result,
+};
+
 #[cfg(feature = "opengl")]
 use crate::ffi::inPuppetDraw;
 use crate::ffi::{
@@ -23,31 +28,41 @@ pub struct Inochi2DPuppet {
 }
 
 impl Inochi2DPuppet {
-    pub fn from(buffer: *const u8, size: usize, name: Option<String>) -> Self {
-        #[cfg(feature = "logging")]
-        debug!("Constructing puppet from {} bytes", size);
-        unsafe {
-            let hndl = inPuppetLoadFromMemory(buffer, size);
-            Inochi2DPuppet {
-                handle: hndl,
-                name: name.unwrap_or(String::from("<in-memory-puppet>")),
+    pub fn from_raw_handle(handle: *mut InPuppet, name: String) -> Result<Self> {
+        if handle.is_null() {
+            let error_information = unsafe { inErrorGet() };
+
+            if error_information.is_null() {
+                Err("Unknown error (are C bindings valid?)".into())
+            } else {
+                let error_res = unsafe { String::try_from(*error_information) };
+
+                Err(error_res.unwrap_or_else(|_| "Unknown error (UTF-8 decoding failed!)".into()))
             }
+        } else {
+            Ok(Inochi2DPuppet { handle, name })
         }
     }
 
-    pub fn new(puppet: PathBuf) -> Self {
+    pub unsafe fn from_raw_parts(
+        buffer: *const u8,
+        size: usize,
+        name: Option<String>,
+    ) -> Result<Self> {
+        #[cfg(feature = "logging")]
+        debug!("Constructing puppet from {} bytes", size);
+        let hndl = unsafe { inPuppetLoadFromMemory(buffer, size) };
+
+        Self::from_raw_handle(hndl, name.unwrap_or(String::from("<in-memory-puppet>")))
+    }
+
+    pub fn new(puppet: PathBuf) -> Result<Self> {
         let puppet_path = String::from(puppet.to_str().expect("Unable to get puppet path"));
         #[cfg(feature = "logging")]
         debug!("Constructing puppet from file {}", puppet_path);
+        let hndl = unsafe { inPuppetLoadEx(puppet_path.as_ptr(), puppet_path.len()) };
 
-        unsafe {
-            let hndl = inPuppetLoadEx(puppet_path.as_ptr(), puppet_path.len());
-
-            Inochi2DPuppet {
-                handle: hndl,
-                name: puppet_path,
-            }
-        }
+        Self::from_raw_handle(hndl, puppet_path)
     }
 
     pub fn update(&mut self) {

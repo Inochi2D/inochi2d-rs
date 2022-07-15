@@ -6,8 +6,25 @@
 */
 
 pub mod types {
-    create_opaque_type!(InError);
+    use std::str::Utf8Error;
+
+    #[repr(C)]
+    #[derive(Debug, Copy, Clone)]
+    pub struct InError {
+        len: usize,
+        msg: *const u8,
+    }
     pub type InErrorPtr = *mut InError;
+
+    impl TryFrom<InError> for String {
+        type Error = Utf8Error;
+
+        fn try_from(value: InError) -> Result<Self, Self::Error> {
+            let slice = unsafe { std::slice::from_raw_parts(value.msg, value.len) };
+
+            std::str::from_utf8(slice).map(|x| x.to_string())
+        }
+    }
 
     create_opaque_type!(InPuppet);
     pub type InPuppetPtr = *mut InPuppet;
