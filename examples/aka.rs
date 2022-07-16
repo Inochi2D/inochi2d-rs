@@ -13,6 +13,12 @@ extern crate tracing_subscriber;
 use std::path::PathBuf;
 
 use glutin::dpi::LogicalSize;
+use glutin::event::{
+    ElementState, Event, KeyboardInput, MouseScrollDelta, StartCause, VirtualKeyCode, WindowEvent,
+};
+use glutin::event_loop::{ControlFlow, EventLoop};
+use glutin::window::WindowBuilder;
+use glutin::{Api, ContextBuilder, GlProfile, GlRequest};
 use inochi2d_rs::{
     camera::Inochi2DCamera, core::Inochi2D, puppet::Inochi2DPuppet, scene::Inochi2DScene,
     MONOTONIC_CLOCK,
@@ -20,13 +26,6 @@ use inochi2d_rs::{
 
 #[cfg(feature = "logging")]
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*};
-
-use glutin::event::{
-    ElementState, Event, KeyboardInput, MouseScrollDelta, StartCause, VirtualKeyCode, WindowEvent,
-};
-use glutin::event_loop::{ControlFlow, EventLoop};
-use glutin::window::WindowBuilder;
-use glutin::{Api, ContextBuilder, GlProfile, GlRequest};
 
 fn main() {
     /* You can ignore this, it's used for debug logging and is optional */
@@ -48,6 +47,7 @@ fn main() {
         .build_windowed(wb, &el)
         .expect("Unable to create window");
 
+    /* Ensure it's the current window */
     let windowed_context = unsafe { windowed_context.make_current().unwrap() };
     let gl_context = windowed_context.context();
 
