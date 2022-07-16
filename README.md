@@ -28,7 +28,7 @@ You can run the main OpenGL example with:
 ```
 $ cargo run --example midori
 ```
-
+![midori example](./contrib/midori-example.png)
 ## License
 
 These bindings are licensed under the [BSD-2-Clause](https://spdx.org/licenses/BSD-2-Clause.html) license, the full text of which can be found in the [LICENSE](./LICENSE) file.
