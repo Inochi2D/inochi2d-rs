@@ -6,14 +6,13 @@
 */
 
 extern crate gl;
-extern crate glfw;
 extern crate inochi2d_rs;
 #[cfg(feature = "logging")]
 extern crate tracing_subscriber;
 
 use std::path::PathBuf;
 
-use glfw::Context;
+use glutin::dpi::LogicalSize;
 use inochi2d_rs::{
     camera::Inochi2DCamera, core::Inochi2D, puppet::Inochi2DPuppet, scene::Inochi2DScene,
     MONOTONIC_CLOCK,
@@ -21,6 +20,13 @@ use inochi2d_rs::{
 
 #[cfg(feature = "logging")]
 use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*};
+
+use glutin::event::{
+    ElementState, Event, KeyboardInput, MouseScrollDelta, StartCause, VirtualKeyCode, WindowEvent,
+};
+use glutin::event_loop::{ControlFlow, EventLoop};
+use glutin::window::WindowBuilder;
+use glutin::{Api, ContextBuilder, GlProfile, GlRequest};
 
 fn main() {
     /* You can ignore this, it's used for debug logging and is optional */
@@ -30,30 +36,23 @@ fn main() {
         .with(LevelFilter::DEBUG)
         .init();
 
-    /* Setup a new GLFW context */
-    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
-
-    /* Set OpenGL window hints */
-    glfw.window_hint(glfw::WindowHint::ContextVersion(4, 1));
-    glfw.window_hint(glfw::WindowHint::OpenGlProfile(
-        glfw::OpenGlProfileHint::Core,
-    ));
+    let el = EventLoop::new();
 
     /* Create a new window for us to render in */
-    let (mut win, events) = glfw
-        .create_window(800, 600, "inochi2d-rs", glfw::WindowMode::Windowed)
+    let wb = WindowBuilder::new()
+        .with_inner_size(LogicalSize::new(800.0, 600.0))
+        .with_title("inochi2d-rs");
+    let windowed_context = ContextBuilder::new()
+        .with_gl(GlRequest::Specific(Api::OpenGl, (4, 1)))
+        .with_gl_profile(GlProfile::Core)
+        .build_windowed(wb, &el)
         .expect("Unable to create window");
 
-    /* Ensure it's the current window */
-    win.make_current();
+    let windowed_context = unsafe { windowed_context.make_current().unwrap() };
+    let gl_context = windowed_context.context();
 
-    /* Make sure GL and GLFW can talk to each other */
-    gl::load_with(|s| glfw.get_proc_address_raw(s));
-
-    /* Setup polling for the window events we care about */
-    win.set_key_polling(true);
-    win.set_framebuffer_size_polling(true);
-    win.set_scroll_polling(true);
+    /* Make sure GL and glutin can talk to each other */
+    gl::load_with(|s| gl_context.get_proc_address(s) as *const _);
 
     /* Create a new Inochi2D context */
     let mut ctx = Inochi2D::new(MONOTONIC_CLOCK, 800, 800);
@@ -68,43 +67,64 @@ fn main() {
     let mut scene = Inochi2DScene::new();
 
     /* Main Window loop */
-    while !win.should_close() {
-        /* Clear the Framebuffer so we don't get ghosting and garbage */
-        unsafe {
-            gl::ClearColor(0.0, 0.0, 0.0, 1.0);
-            gl::Clear(gl::COLOR_BUFFER_BIT);
-        }
-        /* Pull events and handle the ones we care about*/
-        glfw.poll_events();
-        for (_, e) in glfw::flush_messages(&events) {
-            match e {
-                glfw::WindowEvent::Key(glfw::Key::Escape, _, glfw::Action::Press, _) => {
-                    /* Let us exit the application */
-                    win.set_should_close(true)
-                }
-                glfw::WindowEvent::FramebufferSize(width, height) => {
+    el.run(move |event, _, control_flow| {
+        *control_flow = ControlFlow::Poll;
+
+        match event {
+            Event::LoopDestroyed => (),
+            Event::WindowEvent { event, .. } => match event {
+                WindowEvent::Resized(physical_size) => {
                     /* Handle window resizing */
-                    ctx.set_viewport(width, height);
+                    windowed_context.resize(physical_size);
+
+                    ctx.set_viewport(physical_size.width as i32, physical_size.height as i32);
                     unsafe {
-                        gl::Viewport(0, 0, width, height);
+                        gl::Viewport(
+                            0,
+                            0,
+                            physical_size.width as i32,
+                            physical_size.height as i32,
+                        );
                     }
                 }
-                glfw::WindowEvent::Scroll(_, vert) => {
+                WindowEvent::CloseRequested
+                | WindowEvent::KeyboardInput {
+                    input:
+                        KeyboardInput {
+                            virtual_keycode: Some(VirtualKeyCode::Escape),
+                            state: ElementState::Pressed,
+                            ..
+                        },
+                    ..
+                } => *control_flow = ControlFlow::Exit,
+                WindowEvent::MouseWheel {
+                    delta: MouseScrollDelta::LineDelta(_, vert),
+                    ..
+                } => {
                     /* Allow us to zoom with the scroll wheel */
-                    zoom += vert * 0.01;
+                    zoom += f64::from(vert) * 0.01;
                     zoom = zoom.clamp(0.01, 10.0);
                     cam.set_zoom(zoom as f32);
                 }
-                _ => {}
-            }
-        }
+                _ => (),
+            },
+            Event::NewEvents(StartCause::Poll) | Event::RedrawRequested(_) => {
+                /* Clear the Framebuffer so we don't get ghosting and garbage */
+                unsafe {
+                    gl::ClearColor(0.0, 0.0, 0.0, 1.0);
+                    gl::Clear(gl::COLOR_BUFFER_BIT);
+                }
 
-        /* Update and then draw the puppet */
-        puppet.update();
-        puppet.draw();
-        /* Draw the scene */
-        scene.draw(0.0, 0.0, ctx.view_width as f32, ctx.view_height as f32);
-        /* Swap the buffers and continue */
-        win.swap_buffers();
-    }
+                /* Update and then draw the puppet */
+                puppet.update();
+                puppet.draw();
+                /* Draw the scene */
+                scene.draw(0.0, 0.0, ctx.view_width as f32, ctx.view_height as f32);
+
+                windowed_context.swap_buffers().unwrap();
+                windowed_context.window().request_redraw();
+            }
+            _ => (),
+        }
+    });
 }
